@@ -9,6 +9,7 @@ import 'package:apartmanyonet/features/admin/presentation/pages/admin_dashboard_
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_tickets_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_transactions_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/widgets/admin_shell.dart';
+import 'package:apartmanyonet/features/settings/presentation/pages/profile_page.dart';
 import 'package:apartmanyonet/features/auth/auth_state.dart';
 import 'package:apartmanyonet/features/auth/presentation/pages/login_page.dart';
 import 'package:apartmanyonet/features/auth/presentation/providers/auth_notifier.dart';
@@ -89,6 +90,11 @@ class AppRouter {
             path: AppRoutes.adminAnnouncements,
             name: 'admin-announcements',
             builder: (_, _) => const AdminAnnouncementsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.adminProfile,
+            name: 'admin-profile',
+            builder: (_, _) => const ProfilePage(),
           ),
         ],
       ),

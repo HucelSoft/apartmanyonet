@@ -14,6 +14,7 @@ abstract final class AppRoutes {
   static const String adminTransactions = '/admin/transactions';
   static const String adminTickets = '/admin/tickets';
   static const String adminAnnouncements = '/admin/announcements';
+  static const String adminProfile = '/admin/profile';
 
   // ── Resident branch ────────────────────────────────────────────────────────
   /// Root of the resident branch; redirects to [residentDashboard].

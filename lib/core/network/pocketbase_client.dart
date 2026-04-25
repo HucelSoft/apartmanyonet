@@ -36,6 +36,5 @@ class PocketBaseService {
     required String collectionId,
     required String recordId,
     required String filename,
-  }) =>
-      '$baseUrl/api/files/$collectionId/$recordId/$filename';
+  }) => '$baseUrl/api/files/$collectionId/$recordId/$filename';
 }

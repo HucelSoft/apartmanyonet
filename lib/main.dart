@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -7,15 +8,14 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/presentation/providers/auth_notifier.dart';
+import 'features/settings/presentation/providers/preference_notifier.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         // ── Infrastructure ─────────────────────────────────────────────────
-        Provider<PocketBaseService>(
-          create: (_) => PocketBaseService.instance,
-        ),
+        Provider<PocketBaseService>(create: (_) => PocketBaseService.instance),
 
         // ── Data sources ───────────────────────────────────────────────────
         ProxyProvider<PocketBaseService, AuthRemoteDataSource>(
@@ -30,6 +30,12 @@ void main() {
               AuthNotifier(context.read<AuthRemoteDataSource>()),
           update: (context, dataSource, previous) =>
               previous ?? AuthNotifier(dataSource),
+        ),
+
+        /// Global user preferences (theme + language).
+        /// Placed after [AuthNotifier] so it can outlive individual sessions.
+        ChangeNotifierProvider<PreferenceNotifier>(
+          create: (_) => PreferenceNotifier(),
         ),
       ],
       child: const _RouterScope(),
@@ -55,19 +61,27 @@ class _RouterScopeState extends State<_RouterScope> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Build once; the router's refreshListenable keeps it reactive.
-    _router ??= AppRouter(
-      authNotifier: context.read<AuthNotifier>(),
-    ).router;
+    _router ??= AppRouter(authNotifier: context.read<AuthNotifier>()).router;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch [PreferenceNotifier] so theme & locale changes rebuild MaterialApp.
+    final prefs = context.watch<PreferenceNotifier>();
+
     return MaterialApp.router(
       title: 'ApartmanYönet',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: prefs.themeMode,
+      locale: prefs.locale,
+      supportedLocales: const [Locale('tr'), Locale('en')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       routerConfig: _router!,
     );
   }

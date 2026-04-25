@@ -54,7 +54,11 @@ class _AdminSidebar extends StatelessWidget {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.apartment, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.apartment,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Column(
@@ -71,10 +75,7 @@ class _AdminSidebar extends StatelessWidget {
                     ),
                     Text(
                       'Admin Panel',
-                      style: TextStyle(
-                        color: Color(0xFF94A3B8),
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
                     ),
                   ],
                 ),
@@ -120,60 +121,81 @@ class _AdminSidebar extends StatelessWidget {
           const Spacer(),
           const Divider(color: Color(0xFF1E293B), height: 1),
 
-          // ── User info + logout ───────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AppColors.primary,
-                  child: Text(
-                    (auth.currentUser?.name?.isNotEmpty == true
-                            ? auth.currentUser!.name![0]
-                            : auth.currentUser?.email[0] ?? 'A')
-                        .toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
+          // ── User info + logout (clickable → opens profile)  ──────────────
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => context.go(AppRoutes.adminProfile),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        auth.currentUser?.name ?? 'Admin',
+                child: Row(
+                  children: [
+                    // Avatar
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppColors.primary,
+                      child: Text(
+                        (auth.currentUser?.name?.isNotEmpty == true
+                                ? auth.currentUser!.name![0]
+                                : auth.currentUser?.email[0] ?? 'A')
+                            .toUpperCase(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        auth.currentUser?.email ?? '',
-                        style: const TextStyle(
-                          color: Color(0xFF94A3B8),
-                          fontSize: 11,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            auth.currentUser?.name ?? 'Admin',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            auth.currentUser?.email ?? '',
+                            style: const TextStyle(
+                              color: Color(0xFF94A3B8),
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    // Logout icon (separate tap target)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.logout_rounded,
+                        color: Color(0xFF94A3B8),
+                        size: 18,
+                      ),
+                      tooltip: 'Logout',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      onPressed: () => context.read<AuthNotifier>().logout(),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.logout_rounded,
-                      color: Color(0xFF94A3B8), size: 18),
-                  tooltip: 'Logout',
-                  onPressed: () => context.read<AuthNotifier>().logout(),
-                ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 4),
         ],
       ),
     );
@@ -226,8 +248,7 @@ class _NavItem extends StatelessWidget {
                   style: TextStyle(
                     color: _isActive ? Colors.white : const Color(0xFF94A3B8),
                     fontSize: 13.5,
-                    fontWeight:
-                        _isActive ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: _isActive ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               ],
