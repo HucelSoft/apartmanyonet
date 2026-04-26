@@ -176,6 +176,42 @@ class TransactionRepository {
         .toList();
   }
 
+  Future<TransactionTypeModel> createType({
+    required String name,
+    required TransactionGenre genre,
+    String? description,
+  }) async {
+    final record = await _pb
+        .collection(TransactionTypeModel.collectionName)
+        .create(body: {
+      'type': name,
+      'genre': genre.name,
+      'organization': _orgId,
+      if (description != null && description.isNotEmpty)
+        'description': description,
+    });
+    return TransactionTypeModel.fromJson(record.toJson());
+  }
+
+  Future<TransactionTypeModel> updateType(
+    String id, {
+    required String name,
+    required TransactionGenre genre,
+    String? description,
+  }) async {
+    final record = await _pb
+        .collection(TransactionTypeModel.collectionName)
+        .update(id, body: {
+      'type': name,
+      'genre': genre.name,
+      'description': description ?? '',
+    });
+    return TransactionTypeModel.fromJson(record.toJson());
+  }
+
+  Future<void> deleteType(String id) =>
+      _pb.collection(TransactionTypeModel.collectionName).delete(id);
+
   Future<List<SiteModel>> fetchSites() async {
     final result = await _pb.collection(SiteModel.collectionName).getList(
           perPage: 200,

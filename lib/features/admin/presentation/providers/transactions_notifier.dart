@@ -10,7 +10,7 @@ import 'package:apartmanyonet/features/transaction/data/repositories/transaction
 /// State for [TransactionsNotifier].
 class TransactionsNotifier extends ChangeNotifier {
   TransactionsNotifier(this._repo) {
-    _loadAll();
+    Future.microtask(_loadAll);
   }
 
   final TransactionRepository _repo;
@@ -184,6 +184,81 @@ class TransactionsNotifier extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ── Transaction Type CRUD ──────────────────────────────────────────────────
+
+  String? _typeError;
+  String? get typeError => _typeError;
+
+  Future<void> refreshTypes() async {
+    _types = await _repo.fetchTypes();
+    notifyListeners();
+  }
+
+  Future<bool> createType({
+    required String name,
+    required TransactionGenre genre,
+    String? description,
+  }) async {
+    try {
+      final created = await _repo.createType(
+        name: name,
+        genre: genre,
+        description: description,
+      );
+      _types = [..._types, created]
+        ..sort((a, b) => a.type.compareTo(b.type));
+      _typeError = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _typeError = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateType(
+    String id, {
+    required String name,
+    required TransactionGenre genre,
+    String? description,
+  }) async {
+    try {
+      final updated = await _repo.updateType(
+        id,
+        name: name,
+        genre: genre,
+        description: description,
+      );
+      final idx = _types.indexWhere((t) => t.id == id);
+      if (idx != -1) {
+        _types = List.of(_types)..[idx] = updated;
+        _types.sort((a, b) => a.type.compareTo(b.type));
+      }
+      _typeError = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _typeError = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteType(String id) async {
+    try {
+      await _repo.deleteType(id);
+      _types = _types.where((t) => t.id != id).toList();
+      _typeError = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _typeError = e.toString();
       notifyListeners();
       return false;
     }

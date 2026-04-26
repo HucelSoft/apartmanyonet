@@ -135,6 +135,22 @@ class _PageHeader extends StatelessWidget {
               color: const Color(0xFF64748B),
             ),
           ),
+          const SizedBox(width: 4),
+          // ── Manage Types button ────────────────────────────────────────────
+          OutlinedButton.icon(
+            onPressed: () => _showTypesDialog(context, notifier),
+            icon: const Icon(Icons.category_rounded, size: 16),
+            label: const Text('Manage Types',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
         ],
       ),
     );
@@ -813,6 +829,7 @@ class _TransactionDialogState extends State<_TransactionDialog> {
     super.initState();
     final e = widget.existing;
     if (e != null) {
+      // Populate plain fields immediately (no notifyListeners involved)
       _amount.text = (e.transaction.amount ?? 0).toStringAsFixed(2);
       _description.text = e.transaction.description ?? '';
       _date = e.transaction.date;
@@ -820,18 +837,18 @@ class _TransactionDialogState extends State<_TransactionDialog> {
       _paymentDate = e.transaction.paymentDate;
       _status = e.transaction.status;
 
-      // Pre-select from cached lists
+      // Sync-safe: reading cached lists does NOT call notifyListeners
       final n = context.read<TransactionsNotifier>();
-      _selectedType = n.types
-          .where((t) => t.id == e.transaction.type)
-          .firstOrNull;
-      _selectedSite = n.sites
-          .where((s) => s.id == e.transaction.site)
-          .firstOrNull;
+      _selectedType =
+          n.types.where((t) => t.id == e.transaction.type).firstOrNull;
+      _selectedSite =
+          n.sites.where((s) => s.id == e.transaction.site).firstOrNull;
 
-      // Load apartments & flats for pre-selection
-      if (_selectedSite != null) {
-        n.loadApartmentsForSite(_selectedSite!.id).then((_) {
+      // Defer async notifier calls until AFTER the first frame is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        if (_selectedSite != null) {
+          await n.loadApartmentsForSite(_selectedSite!.id);
           if (!mounted) return;
           setState(() {
             _selectedApartment = n.apartments
@@ -839,19 +856,24 @@ class _TransactionDialogState extends State<_TransactionDialog> {
                 .firstOrNull;
           });
           if (_selectedApartment != null) {
-            n.loadFlatsForApartment(_selectedApartment!.id).then((_) {
-              if (!mounted) return;
-              setState(() {
-                _selectedFlat = n.flats
-                    .where((f) => f.id == e.transaction.flat)
-                    .firstOrNull;
-              });
+            await n.loadFlatsForApartment(_selectedApartment!.id);
+            if (!mounted) return;
+            setState(() {
+              _selectedFlat = n.flats
+                  .where((f) => f.id == e.transaction.flat)
+                  .firstOrNull;
             });
           }
-        });
-      }
+        }
+      });
     } else {
-      context.read<TransactionsNotifier>().clearApartmentsAndFlats();
+      // clearApartmentsAndFlats() calls notifyListeners() — must NOT run
+      // during build. Defer to after the first frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<TransactionsNotifier>().clearApartmentsAndFlats();
+        }
+      });
     }
   }
 
@@ -1369,8 +1391,462 @@ void _confirmDelete(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Tiny form helpers
+// Transaction Type Management Dialog
 // ─────────────────────────────────────────────────────────────────────────────
+
+void _showTypesDialog(BuildContext context, TransactionsNotifier notifier) {
+  showDialog<void>(
+    context: context,
+    builder: (_) => ChangeNotifierProvider.value(
+      value: notifier,
+      child: const _TypesManagementDialog(),
+    ),
+  );
+}
+
+class _TypesManagementDialog extends StatefulWidget {
+  const _TypesManagementDialog();
+
+  @override
+  State<_TypesManagementDialog> createState() =>
+      _TypesManagementDialogState();
+}
+
+class _TypesManagementDialogState extends State<_TypesManagementDialog> {
+  // Form for add / edit
+  final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
+  TransactionGenre _genre = TransactionGenre.debit;
+
+  /// null → adding new; non-null → editing existing ID
+  String? _editingId;
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _descCtrl.dispose();
+    super.dispose();
+  }
+
+  void _startEdit(TransactionTypeModel t) {
+    setState(() {
+      _editingId = t.id;
+      _nameCtrl.text = t.type;
+      _descCtrl.text = t.description ?? '';
+      _genre = t.genre;
+    });
+  }
+
+  void _cancelEdit() {
+    setState(() {
+      _editingId = null;
+      _nameCtrl.clear();
+      _descCtrl.clear();
+      _genre = TransactionGenre.debit;
+    });
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _saving = true);
+
+    final n = context.read<TransactionsNotifier>();
+    final ok = _editingId == null
+        ? await n.createType(
+            name: _nameCtrl.text.trim(),
+            genre: _genre,
+            description: _descCtrl.text.trim(),
+          )
+        : await n.updateType(
+            _editingId!,
+            name: _nameCtrl.text.trim(),
+            genre: _genre,
+            description: _descCtrl.text.trim(),
+          );
+
+    if (!mounted) return;
+    setState(() => _saving = false);
+
+    if (ok) {
+      _cancelEdit();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(n.typeError ?? 'Operation failed'),
+        backgroundColor: const Color(0xFFDC2626),
+      ));
+    }
+  }
+
+  Future<void> _delete(TransactionTypeModel t) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        title: const Text('Delete Type?'),
+        content: Text(
+          '"${t.type}" will be permanently removed.\n'
+          'Existing transactions using this type will be unaffected.',
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFDC2626)),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final n = context.read<TransactionsNotifier>();
+    await n.deleteType(t.id);
+    if (mounted && n.typeError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(n.typeError!),
+        backgroundColor: const Color(0xFFDC2626),
+      ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final n = context.watch<TransactionsNotifier>();
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints:
+            const BoxConstraints(maxWidth: 520, maxHeight: 620),
+        child: Column(children: [
+          // ── Title bar ───────────────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
+            color: AppColors.primary,
+            child: Row(children: [
+              const Icon(Icons.category_rounded,
+                  color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text('Transaction Types',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white)),
+              ),
+              IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close_rounded, color: Colors.white),
+                tooltip: 'Close',
+              ),
+            ]),
+          ),
+
+          // ── Add / Edit form ─────────────────────────────────────────────────
+          Container(
+            color: const Color(0xFFF8FAFC),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _editingId == null ? 'Add New Type' : 'Edit Type',
+                    style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF374151)),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _nameCtrl,
+                        decoration:
+                            _inputDec('Type name (e.g. Aidat)', Icons.label_rounded),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Required'
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // Genre toggle
+                    _GenreToggle(
+                      value: _genre,
+                      onChanged: (g) => setState(() => _genre = g),
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _descCtrl,
+                    decoration:
+                        _inputDec('Description (optional)', Icons.notes_rounded),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (_editingId != null)
+                        TextButton(
+                          onPressed: _saving ? null : _cancelEdit,
+                          child: const Text('Cancel'),
+                        ),
+                      const SizedBox(width: 8),
+                      FilledButton.icon(
+                        onPressed: _saving ? null : _save,
+                        icon: _saving
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white))
+                            : Icon(
+                                _editingId == null
+                                    ? Icons.add_rounded
+                                    : Icons.check_rounded,
+                                size: 16),
+                        label: Text(_editingId == null ? 'Add' : 'Update',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600)),
+                        style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const Divider(height: 1),
+
+          // ── List ─────────────────────────────────────────────────────────────
+          Expanded(
+            child: n.types.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.inbox_rounded,
+                            size: 40, color: Color(0xFFCBD5E1)),
+                        const SizedBox(height: 10),
+                        const Text('No types yet.',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF94A3B8))),
+                        const SizedBox(height: 6),
+                        const Text('Add one above to get started.',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFFB0BAC9))),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: n.types.length,
+                    separatorBuilder: (_, _) =>
+                        const Divider(height: 1, indent: 20, endIndent: 20),
+                    itemBuilder: (_, idx) {
+                      final t = n.types[idx];
+                      final isCredit = t.genre == TransactionGenre.credit;
+                      final isEditing = _editingId == t.id;
+
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 2),
+                        selected: isEditing,
+                        selectedTileColor:
+                            AppColors.primary.withValues(alpha: 0.05),
+                        leading: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: isCredit
+                                ? const Color(0xFFDCFCE7)
+                                : const Color(0xFFFFEDD5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            isCredit
+                                ? Icons.arrow_circle_down_rounded
+                                : Icons.arrow_circle_up_rounded,
+                            size: 18,
+                            color: isCredit
+                                ? const Color(0xFF16A34A)
+                                : const Color(0xFFEA580C),
+                          ),
+                        ),
+                        title: Text(t.type,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.5)),
+                        subtitle: (t.description?.isNotEmpty ?? false)
+                            ? Text(t.description!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF94A3B8)))
+                            : null,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Genre badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: isCredit
+                                    ? const Color(0xFFDCFCE7)
+                                    : const Color(0xFFFFEDD5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                isCredit ? 'Credit' : 'Debit',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: isCredit
+                                      ? const Color(0xFF15803D)
+                                      : const Color(0xFFEA580C),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            _IconBtn(
+                              icon: Icons.edit_rounded,
+                              tooltip: 'Edit',
+                              onTap: () => _startEdit(t),
+                            ),
+                            _IconBtn(
+                              icon: Icons.delete_outline_rounded,
+                              tooltip: 'Delete',
+                              color: const Color(0xFFDC2626),
+                              onTap: () => _delete(t),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Genre toggle (Credit / Debit)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _GenreToggle extends StatelessWidget {
+  const _GenreToggle({required this.value, required this.onChanged});
+  final TransactionGenre value;
+  final ValueChanged<TransactionGenre> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFFDDE1E7)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _GenreBtn(
+            label: 'Debit',
+            icon: Icons.arrow_circle_up_rounded,
+            selected: value == TransactionGenre.debit,
+            activeColor: const Color(0xFFEA580C),
+            onTap: () => onChanged(TransactionGenre.debit),
+            leftRadius: true,
+          ),
+          Container(width: 1, height: 38, color: const Color(0xFFDDE1E7)),
+          _GenreBtn(
+            label: 'Credit',
+            icon: Icons.arrow_circle_down_rounded,
+            selected: value == TransactionGenre.credit,
+            activeColor: const Color(0xFF16A34A),
+            onTap: () => onChanged(TransactionGenre.credit),
+            rightRadius: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GenreBtn extends StatelessWidget {
+  const _GenreBtn({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.activeColor,
+    required this.onTap,
+    this.leftRadius = false,
+    this.rightRadius = false,
+  });
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final Color activeColor;
+  final VoidCallback onTap;
+  final bool leftRadius;
+  final bool rightRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(
+          color: selected
+              ? activeColor.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.only(
+            topLeft: leftRadius ? const Radius.circular(7) : Radius.zero,
+            bottomLeft:
+                leftRadius ? const Radius.circular(7) : Radius.zero,
+            topRight:
+                rightRadius ? const Radius.circular(7) : Radius.zero,
+            bottomRight:
+                rightRadius ? const Radius.circular(7) : Radius.zero,
+          ),
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(icon,
+              size: 14,
+              color:
+                  selected ? activeColor : const Color(0xFF94A3B8)),
+          const SizedBox(width: 5),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: selected
+                      ? activeColor
+                      : const Color(0xFF94A3B8))),
+        ]),
+      ),
+    );
+  }
+}
+
+
 
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);

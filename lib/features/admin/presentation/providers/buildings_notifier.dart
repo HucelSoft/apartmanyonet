@@ -47,7 +47,7 @@ class ApartmentNode {
 /// Scoped locally inside [AdminBuildingsPage] via [ChangeNotifierProvider].
 class BuildingsNotifier extends ChangeNotifier {
   BuildingsNotifier(this._repo) {
-    loadSites();
+    Future.microtask(loadSites);
   }
 
   final BuildingRepository _repo;

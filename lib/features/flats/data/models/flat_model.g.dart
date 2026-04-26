@@ -13,6 +13,7 @@ _FlatModel _$FlatModelFromJson(Map<String, dynamic> json) => _FlatModel(
   organization: parseRelationId(json['organization']),
   site: parseRelationId(json['site']),
   status: $enumDecode(_$FlatStatusEnumMap, json['status']),
+  residentName: json['residentName'] as String?,
   owner: parseRelationIdNullable(json['owner']),
   contract: parseRelationIdNullable(json['contract']),
   created: parsePbDate(json['created']),
@@ -28,6 +29,7 @@ Map<String, dynamic> _$FlatModelToJson(_FlatModel instance) =>
       'organization': instance.organization,
       'site': instance.site,
       'status': _$FlatStatusEnumMap[instance.status]!,
+      'residentName': instance.residentName,
       'owner': instance.owner,
       'contract': instance.contract,
       'created': formatPbDate(instance.created),
@@ -37,5 +39,6 @@ Map<String, dynamic> _$FlatModelToJson(_FlatModel instance) =>
 
 const _$FlatStatusEnumMap = {
   FlatStatus.occupied: 'occupied',
-  FlatStatus.vacant: 'vacant',
+  FlatStatus.empty: 'vacant',
+  FlatStatus.maintenance: 'maintenance',
 };

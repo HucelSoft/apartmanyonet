@@ -19,7 +19,9 @@ enum FlatStatus {
   @JsonValue('occupied')
   occupied,
   @JsonValue('vacant')
-  vacant,
+  empty,
+  @JsonValue('maintenance')
+  maintenance,
 }
 
 /// Lifecycle state of a lease contract.
