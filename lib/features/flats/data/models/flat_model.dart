@@ -33,13 +33,6 @@ abstract class FlatModel with _$FlatModel {
 
     required FlatStatus status,
 
-    /// Name of the current resident (optional).
-    /// Usually derived from the active contract.
-    String? residentName,
-
-    /// ID of the [users] record Color for the flat owner (optional).
-    @JsonKey(fromJson: parseRelationIdNullable)
-    String? owner,
 
     /// ID of the currently active [contract] record (optional).
     @JsonKey(fromJson: parseRelationIdNullable)

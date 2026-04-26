@@ -6,8 +6,11 @@ import 'package:apartmanyonet/core/router/app_routes.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_announcements_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_buildings_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_dashboard_page.dart';
+import 'package:apartmanyonet/features/admin/presentation/pages/admin_contracts_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_tickets_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/pages/admin_transactions_page.dart';
+import 'package:apartmanyonet/features/admin/presentation/pages/admin_residents_page.dart';
+import 'package:apartmanyonet/features/admin/presentation/pages/admin_owners_page.dart';
 import 'package:apartmanyonet/features/admin/presentation/widgets/admin_shell.dart';
 import 'package:apartmanyonet/features/settings/presentation/pages/profile_page.dart';
 import 'package:apartmanyonet/features/auth/auth_state.dart';
@@ -33,7 +36,7 @@ import 'package:apartmanyonet/features/resident/presentation/widgets/resident_sh
 /// ```
 class AppRouter {
   AppRouter({required AuthNotifier authNotifier})
-      : _authNotifier = authNotifier;
+    : _authNotifier = authNotifier;
 
   final AuthNotifier _authNotifier;
 
@@ -82,6 +85,11 @@ class AppRouter {
             builder: (_, _) => const AdminTransactionsPage(),
           ),
           GoRoute(
+            path: AppRoutes.adminContracts,
+            name: 'admin-contracts',
+            builder: (_, _) => const AdminContractsPage(),
+          ),
+          GoRoute(
             path: AppRoutes.adminTickets,
             name: 'admin-tickets',
             builder: (_, _) => const AdminTicketsPage(),
@@ -90,6 +98,16 @@ class AppRouter {
             path: AppRoutes.adminAnnouncements,
             name: 'admin-announcements',
             builder: (_, _) => const AdminAnnouncementsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.adminResidents,
+            name: 'admin-residents',
+            builder: (_, _) => const AdminResidentsPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.adminOwners,
+            name: 'admin-owners',
+            builder: (_, _) => const AdminOwnersPage(),
           ),
           GoRoute(
             path: AppRoutes.adminProfile,
@@ -161,12 +179,9 @@ class AppRouter {
       return _homeForRole(role);
     }
 
-    // ── 4. Resident / Owner cannot access admin routes ────────────────────────
-    if (location.startsWith('/admin') &&
-        (role == UserRole.resident || role == UserRole.owner)) {
-      return AppRoutes.residentDashboard;
-    }
-
+    // Residents and owners login feature is removed or uses a different mechanism.
+    // Ensure that if they hit a route, they are handled. Since we only have admins:
+    // ...
     // ── 5. Admin roles cannot access resident routes ──────────────────────────
     if (location.startsWith('/resident') &&
         (role == UserRole.superAdmin || role == UserRole.siteAdmin)) {
@@ -181,7 +196,6 @@ class AppRouter {
   static String homeForRole(UserRole role) => _homeForRole(role);
 
   static String _homeForRole(UserRole role) => switch (role) {
-        UserRole.superAdmin || UserRole.siteAdmin => AppRoutes.adminDashboard,
-        UserRole.resident || UserRole.owner => AppRoutes.residentDashboard,
-      };
+    UserRole.superAdmin || UserRole.siteAdmin => AppRoutes.adminDashboard,
+  };
 }

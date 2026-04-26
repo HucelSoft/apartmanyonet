@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:apartmanyonet/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -89,32 +90,50 @@ class _AdminSidebar extends StatelessWidget {
           // ── Nav items ────────────────────────────────────────────────────────
           _NavItem(
             icon: Icons.dashboard_rounded,
-            label: 'Dashboard',
+            label: AppLocalizations.of(context)!.dashboard,
             route: AppRoutes.adminDashboard,
             currentLocation: location,
           ),
           _NavItem(
             icon: Icons.apartment_rounded,
-            label: 'Buildings',
+            label: AppLocalizations.of(context)!.buildings,
             route: AppRoutes.adminBuildings,
             currentLocation: location,
           ),
           _NavItem(
             icon: Icons.account_balance_wallet_rounded,
-            label: 'Transactions',
+            label: AppLocalizations.of(context)!.transactions,
             route: AppRoutes.adminTransactions,
             currentLocation: location,
           ),
           _NavItem(
+            icon: Icons.assignment_rounded,
+            label: AppLocalizations.of(context)!.contracts,
+            route: AppRoutes.adminContracts,
+            currentLocation: location,
+          ),
+          _NavItem(
             icon: Icons.confirmation_number_rounded,
-            label: 'Tickets',
+            label: AppLocalizations.of(context)!.tickets,
             route: AppRoutes.adminTickets,
             currentLocation: location,
           ),
           _NavItem(
             icon: Icons.campaign_rounded,
-            label: 'Announcements',
+            label: AppLocalizations.of(context)!.announcements,
             route: AppRoutes.adminAnnouncements,
+            currentLocation: location,
+          ),
+          _NavItem(
+            icon: Icons.groups_rounded,
+            label: AppLocalizations.of(context)!.residents,
+            route: AppRoutes.adminResidents,
+            currentLocation: location,
+          ),
+          _NavItem(
+            icon: Icons.person_rounded,
+            label: AppLocalizations.of(context)!.owners,
+            route: AppRoutes.adminOwners,
             currentLocation: location,
           ),
 
@@ -182,7 +201,7 @@ class _AdminSidebar extends StatelessWidget {
                         color: Color(0xFF94A3B8),
                         size: 18,
                       ),
-                      tooltip: 'Logout',
+                      tooltip: AppLocalizations.of(context)!.logout,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
                         minWidth: 32,

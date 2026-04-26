@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:apartmanyonet/core/constants/app_enums.dart';
 import 'package:apartmanyonet/core/utils/pb_json_helpers.dart';
 
 part 'meter_model.freezed.dart';
@@ -15,9 +14,9 @@ abstract class MeterModel with _$MeterModel {
   const factory MeterModel({
     required String id,
 
-    /// Utility type (water / gas / electric). Empty string treated as [null].
-    @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
-    MeterType? type,
+    /// Utility type relation ID.
+    @JsonKey(fromJson: parseRelationIdNullable)
+    String? type,
 
     /// Date the meter was read. PocketBase field: `read_date`.
     @JsonKey(

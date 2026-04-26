@@ -17,8 +17,9 @@ mixin _$TicketModel {
 
  String get id; String? get title; String? get description;/// Optional priority; empty string from PocketBase is treated as [null].
 @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) TicketPriority? get priority;/// Optional status; empty string from PocketBase is treated as [null].
-@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? get status;/// ID of the submitting resident [users] record (optional).
-@JsonKey(fromJson: parseRelationIdNullable) String? get resident;/// ID of the related [flat] record (optional).
+@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? get status;/// ID of the related [apartment] record (optional).
+@JsonKey(fromJson: parseRelationIdNullable) String? get apartment;/// ID of the related [site] record (optional).
+@JsonKey(fromJson: parseRelationIdNullable) String? get site;/// ID of the related [flat] record (optional).
 @JsonKey(fromJson: parseRelationIdNullable) String? get flat;/// ID of the parent [organization] record (optional).
 @JsonKey(fromJson: parseRelationIdNullable) String? get organization;/// Attached photo filename (single file field; empty string == no photo).
  String? get photos;@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime get created;@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime get updated;@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? get deleted;
@@ -34,16 +35,16 @@ $TicketModelCopyWith<TicketModel> get copyWith => _$TicketModelCopyWithImpl<Tick
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.resident, resident) || other.resident == resident)&&(identical(other.flat, flat) || other.flat == flat)&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.photos, photos) || other.photos == photos)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated)&&(identical(other.deleted, deleted) || other.deleted == deleted));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TicketModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.apartment, apartment) || other.apartment == apartment)&&(identical(other.site, site) || other.site == site)&&(identical(other.flat, flat) || other.flat == flat)&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.photos, photos) || other.photos == photos)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated)&&(identical(other.deleted, deleted) || other.deleted == deleted));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,priority,status,resident,flat,organization,photos,created,updated,deleted);
+int get hashCode => Object.hash(runtimeType,id,title,description,priority,status,apartment,site,flat,organization,photos,created,updated,deleted);
 
 @override
 String toString() {
-  return 'TicketModel(id: $id, title: $title, description: $description, priority: $priority, status: $status, resident: $resident, flat: $flat, organization: $organization, photos: $photos, created: $created, updated: $updated, deleted: $deleted)';
+  return 'TicketModel(id: $id, title: $title, description: $description, priority: $priority, status: $status, apartment: $apartment, site: $site, flat: $flat, organization: $organization, photos: $photos, created: $created, updated: $updated, deleted: $deleted)';
 }
 
 
@@ -54,7 +55,7 @@ abstract mixin class $TicketModelCopyWith<$Res>  {
   factory $TicketModelCopyWith(TicketModel value, $Res Function(TicketModel) _then) = _$TicketModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String? title, String? description,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) TicketPriority? priority,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? status,@JsonKey(fromJson: parseRelationIdNullable) String? resident,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parseRelationIdNullable) String? organization, String? photos,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
+ String id, String? title, String? description,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) TicketPriority? priority,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? status,@JsonKey(fromJson: parseRelationIdNullable) String? apartment,@JsonKey(fromJson: parseRelationIdNullable) String? site,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parseRelationIdNullable) String? organization, String? photos,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
 });
 
 
@@ -71,14 +72,15 @@ class _$TicketModelCopyWithImpl<$Res>
 
 /// Create a copy of TicketModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? priority = freezed,Object? status = freezed,Object? resident = freezed,Object? flat = freezed,Object? organization = freezed,Object? photos = freezed,Object? created = null,Object? updated = null,Object? deleted = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? priority = freezed,Object? status = freezed,Object? apartment = freezed,Object? site = freezed,Object? flat = freezed,Object? organization = freezed,Object? photos = freezed,Object? created = null,Object? updated = null,Object? deleted = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as TicketPriority?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as RecordStatus?,resident: freezed == resident ? _self.resident : resident // ignore: cast_nullable_to_non_nullable
+as RecordStatus?,apartment: freezed == apartment ? _self.apartment : apartment // ignore: cast_nullable_to_non_nullable
+as String?,site: freezed == site ? _self.site : site // ignore: cast_nullable_to_non_nullable
 as String?,flat: freezed == flat ? _self.flat : flat // ignore: cast_nullable_to_non_nullable
 as String?,organization: freezed == organization ? _self.organization : organization // ignore: cast_nullable_to_non_nullable
 as String?,photos: freezed == photos ? _self.photos : photos // ignore: cast_nullable_to_non_nullable
@@ -170,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? resident, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? apartment, @JsonKey(fromJson: parseRelationIdNullable)  String? site, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TicketModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.resident,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
+return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.apartment,_that.site,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
   return orElse();
 
 }
@@ -191,10 +193,10 @@ return $default(_that.id,_that.title,_that.description,_that.priority,_that.stat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? resident, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? apartment, @JsonKey(fromJson: parseRelationIdNullable)  String? site, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)  $default,) {final _that = this;
 switch (_that) {
 case _TicketModel():
-return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.resident,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
+return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.apartment,_that.site,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +213,10 @@ return $default(_that.id,_that.title,_that.description,_that.priority,_that.stat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? resident, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  TicketPriority? priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  RecordStatus? status, @JsonKey(fromJson: parseRelationIdNullable)  String? apartment, @JsonKey(fromJson: parseRelationIdNullable)  String? site, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parseRelationIdNullable)  String? organization,  String? photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,) {final _that = this;
 switch (_that) {
 case _TicketModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.resident,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
+return $default(_that.id,_that.title,_that.description,_that.priority,_that.status,_that.apartment,_that.site,_that.flat,_that.organization,_that.photos,_that.created,_that.updated,_that.deleted);case _:
   return null;
 
 }
@@ -226,7 +228,7 @@ return $default(_that.id,_that.title,_that.description,_that.priority,_that.stat
 @JsonSerializable()
 
 class _TicketModel extends TicketModel {
-  const _TicketModel({required this.id, this.title, this.description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.status, @JsonKey(fromJson: parseRelationIdNullable) this.resident, @JsonKey(fromJson: parseRelationIdNullable) this.flat, @JsonKey(fromJson: parseRelationIdNullable) this.organization, this.photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.deleted}): super._();
+  const _TicketModel({required this.id, this.title, this.description, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.priority, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.status, @JsonKey(fromJson: parseRelationIdNullable) this.apartment, @JsonKey(fromJson: parseRelationIdNullable) this.site, @JsonKey(fromJson: parseRelationIdNullable) this.flat, @JsonKey(fromJson: parseRelationIdNullable) this.organization, this.photos, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.deleted}): super._();
   factory _TicketModel.fromJson(Map<String, dynamic> json) => _$TicketModelFromJson(json);
 
 @override final  String id;
@@ -236,8 +238,10 @@ class _TicketModel extends TicketModel {
 @override@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) final  TicketPriority? priority;
 /// Optional status; empty string from PocketBase is treated as [null].
 @override@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) final  RecordStatus? status;
-/// ID of the submitting resident [users] record (optional).
-@override@JsonKey(fromJson: parseRelationIdNullable) final  String? resident;
+/// ID of the related [apartment] record (optional).
+@override@JsonKey(fromJson: parseRelationIdNullable) final  String? apartment;
+/// ID of the related [site] record (optional).
+@override@JsonKey(fromJson: parseRelationIdNullable) final  String? site;
 /// ID of the related [flat] record (optional).
 @override@JsonKey(fromJson: parseRelationIdNullable) final  String? flat;
 /// ID of the parent [organization] record (optional).
@@ -261,16 +265,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.resident, resident) || other.resident == resident)&&(identical(other.flat, flat) || other.flat == flat)&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.photos, photos) || other.photos == photos)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated)&&(identical(other.deleted, deleted) || other.deleted == deleted));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TicketModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.apartment, apartment) || other.apartment == apartment)&&(identical(other.site, site) || other.site == site)&&(identical(other.flat, flat) || other.flat == flat)&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.photos, photos) || other.photos == photos)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated)&&(identical(other.deleted, deleted) || other.deleted == deleted));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,priority,status,resident,flat,organization,photos,created,updated,deleted);
+int get hashCode => Object.hash(runtimeType,id,title,description,priority,status,apartment,site,flat,organization,photos,created,updated,deleted);
 
 @override
 String toString() {
-  return 'TicketModel(id: $id, title: $title, description: $description, priority: $priority, status: $status, resident: $resident, flat: $flat, organization: $organization, photos: $photos, created: $created, updated: $updated, deleted: $deleted)';
+  return 'TicketModel(id: $id, title: $title, description: $description, priority: $priority, status: $status, apartment: $apartment, site: $site, flat: $flat, organization: $organization, photos: $photos, created: $created, updated: $updated, deleted: $deleted)';
 }
 
 
@@ -281,7 +285,7 @@ abstract mixin class _$TicketModelCopyWith<$Res> implements $TicketModelCopyWith
   factory _$TicketModelCopyWith(_TicketModel value, $Res Function(_TicketModel) _then) = __$TicketModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? title, String? description,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) TicketPriority? priority,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? status,@JsonKey(fromJson: parseRelationIdNullable) String? resident,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parseRelationIdNullable) String? organization, String? photos,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
+ String id, String? title, String? description,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) TicketPriority? priority,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) RecordStatus? status,@JsonKey(fromJson: parseRelationIdNullable) String? apartment,@JsonKey(fromJson: parseRelationIdNullable) String? site,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parseRelationIdNullable) String? organization, String? photos,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
 });
 
 
@@ -298,14 +302,15 @@ class __$TicketModelCopyWithImpl<$Res>
 
 /// Create a copy of TicketModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? priority = freezed,Object? status = freezed,Object? resident = freezed,Object? flat = freezed,Object? organization = freezed,Object? photos = freezed,Object? created = null,Object? updated = null,Object? deleted = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? priority = freezed,Object? status = freezed,Object? apartment = freezed,Object? site = freezed,Object? flat = freezed,Object? organization = freezed,Object? photos = freezed,Object? created = null,Object? updated = null,Object? deleted = freezed,}) {
   return _then(_TicketModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,priority: freezed == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as TicketPriority?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as RecordStatus?,resident: freezed == resident ? _self.resident : resident // ignore: cast_nullable_to_non_nullable
+as RecordStatus?,apartment: freezed == apartment ? _self.apartment : apartment // ignore: cast_nullable_to_non_nullable
+as String?,site: freezed == site ? _self.site : site // ignore: cast_nullable_to_non_nullable
 as String?,flat: freezed == flat ? _self.flat : flat // ignore: cast_nullable_to_non_nullable
 as String?,organization: freezed == organization ? _self.organization : organization // ignore: cast_nullable_to_non_nullable
 as String?,photos: freezed == photos ? _self.photos : photos // ignore: cast_nullable_to_non_nullable

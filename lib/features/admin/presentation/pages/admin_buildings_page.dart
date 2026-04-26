@@ -31,8 +31,6 @@ class _C {
   static const occupiedFg = Color(0xFF15803D);
   static const emptyBg = Color(0xFFDFE3E7);
   static const emptyFg = Color(0xFF414753);
-  static const maintenanceBg = Color(0xFFFFDBC9);
-  static const maintenanceFg = Color(0xFF964400);
 
   static const shadow = Color(0x0F171C1F);
 }
@@ -608,16 +606,8 @@ class _RightPanel extends StatelessWidget {
                         const SizedBox(width: 8),
                         _MetaBadge(
                             label:
-                                '${flats.where((f) => f.status == FlatStatus.empty).length} Empty',
+                                '${flats.where((f) => f.status == FlatStatus.vacant).length} Vacant',
                             color: _C.onSurfaceVar),
-                        if (flats.any((f) =>
-                            f.status == FlatStatus.maintenance)) ...[
-                          const SizedBox(width: 8),
-                          _MetaBadge(
-                              label:
-                                  '${flats.where((f) => f.status == FlatStatus.maintenance).length} Maintenance',
-                              color: _C.maintenanceFg),
-                        ],
                       ]),
                     ],
                   ),
@@ -762,12 +752,7 @@ class _FlatCardState extends State<_FlatCard> {
             _C.occupiedFg,
             'Occupied'
           ),
-        FlatStatus.empty => (_C.emptyBg, _C.emptyFg, 'Empty'),
-        FlatStatus.maintenance => (
-            _C.maintenanceBg,
-            _C.maintenanceFg,
-            'Maintenance'
-          ),
+        FlatStatus.vacant => (_C.emptyBg, _C.emptyFg, 'Vacant'),
       };
 
   @override
@@ -827,24 +812,23 @@ class _FlatCardState extends State<_FlatCard> {
                     ],
                   ),
                   const Spacer(),
-                  if (f.status == FlatStatus.occupied &&
-                      (f.residentName?.isNotEmpty ?? false))
+                  if (f.status == FlatStatus.occupied)
                     Row(children: [
                       CircleAvatar(
                         radius: 10,
                         backgroundColor: _C.primaryLight,
-                        child: Text(
-                          f.residentName![0].toUpperCase(),
-                          style: const TextStyle(
+                        child: const Text(
+                          'O',
+                          style: TextStyle(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: _C.primary),
                         ),
                       ),
                       const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(f.residentName!,
-                            style: const TextStyle(
+                      const Expanded(
+                        child: Text('Occupied',
+                            style: TextStyle(
                                 fontSize: 11,
                                 color: _C.onSurfaceVar,
                                 fontWeight: FontWeight.w500),
@@ -852,11 +836,9 @@ class _FlatCardState extends State<_FlatCard> {
                       ),
                     ])
                   else
-                    Text(
-                      f.status == FlatStatus.empty
-                          ? 'Ready for viewing'
-                          : 'Under maintenance',
-                      style: const TextStyle(
+                    const Text(
+                      'Ready for viewing',
+                      style: TextStyle(
                           fontSize: 11, color: _C.onSurfaceVar),
                     ),
                 ],

@@ -17,8 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: "hucelsoft@gmail.com");
+  final _passwordController = TextEditingController(text: "Halil123");
   bool _obscurePassword = true;
 
   @override
@@ -31,9 +31,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     await context.read<AuthNotifier>().login(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
   }
 
   @override
@@ -63,7 +63,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.apartment, color: Colors.white, size: 36),
+                child: const Icon(
+                  Icons.apartment,
+                  color: Colors.white,
+                  size: 36,
+                ),
               ),
               const SizedBox(height: 20),
               const Text(
@@ -129,24 +133,27 @@ class _LoginPageState extends State<LoginPage> {
                         textInputAction: TextInputAction.done,
                         enabled: !isLoading,
                         onFieldSubmitted: (_) => _submit(),
-                        decoration: _inputDecoration(
-                          hint: '••••••••',
-                          icon: Icons.lock_outline,
-                        ).copyWith(
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: const Color(0xFF94A3B8),
-                              size: 18,
+                        decoration:
+                            _inputDecoration(
+                              hint: '••••••••',
+                              icon: Icons.lock_outline,
+                            ).copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: const Color(0xFF94A3B8),
+                                  size: 18,
+                                ),
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
+                              ),
                             ),
-                            onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
-                          ),
-                        ),
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Enter your password.' : null,
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'Enter your password.'
+                            : null,
                       ),
                       const SizedBox(height: 8),
 
@@ -155,29 +162,40 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.error.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                                color: AppColors.error.withValues(alpha: 0.3)),
+                              color: AppColors.error.withValues(alpha: 0.3),
+                            ),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error_outline,
-                                  color: AppColors.error, size: 16),
+                              Icon(
+                                Icons.error_outline,
+                                color: AppColors.error,
+                                size: 16,
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   error,
                                   style: TextStyle(
-                                      color: AppColors.error, fontSize: 13),
+                                    color: AppColors.error,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
                               GestureDetector(
                                 onTap: context.read<AuthNotifier>().clearError,
-                                child: Icon(Icons.close,
-                                    color: AppColors.error, size: 16),
+                                child: Icon(
+                                  Icons.close,
+                                  color: AppColors.error,
+                                  size: 16,
+                                ),
                               ),
                             ],
                           ),
@@ -194,19 +212,24 @@ class _LoginPageState extends State<LoginPage> {
                           backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         child: isLoading
                             ? const SizedBox(
                                 height: 18,
                                 width: 18,
                                 child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 2),
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
                               )
                             : const Text(
                                 'Sign in',
                                 style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.w600),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                       ),
                     ],
@@ -223,31 +246,29 @@ class _LoginPageState extends State<LoginPage> {
   InputDecoration _inputDecoration({
     required String hint,
     required IconData icon,
-  }) =>
-      InputDecoration(
-        hintText: hint,
-        prefixIcon: Icon(icon, size: 18, color: const Color(0xFF94A3B8)),
-        filled: true,
-        fillColor: const Color(0xFFF8FAFC),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.error),
-        ),
-      );
+  }) => InputDecoration(
+    hintText: hint,
+    prefixIcon: Icon(icon, size: 18, color: const Color(0xFF94A3B8)),
+    filled: true,
+    fillColor: const Color(0xFFF8FAFC),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: AppColors.error),
+    ),
+  );
 
   String? _validateEmail(String? v) {
     if (v == null || v.trim().isEmpty) return 'Enter your email address.';
@@ -265,11 +286,11 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF374151),
-        ),
-      );
+    label,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFF374151),
+    ),
+  );
 }

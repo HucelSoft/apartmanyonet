@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MeterModel {
 
- String get id;/// Utility type (water / gas / electric). Empty string treated as [null].
-@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) MeterType? get type;/// Date the meter was read. PocketBase field: `read_date`.
+ String get id;/// Utility type relation ID.
+@JsonKey(fromJson: parseRelationIdNullable) String? get type;/// Date the meter was read. PocketBase field: `read_date`.
 @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? get readDate; double? get previous; double? get current;/// Computed consumption (current − previous).
  double? get usage;/// ID of the related [flat] record (optional).
 @JsonKey(fromJson: parseRelationIdNullable) String? get flat;@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime get created;@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime get updated;@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? get deleted;
@@ -52,7 +52,7 @@ abstract mixin class $MeterModelCopyWith<$Res>  {
   factory $MeterModelCopyWith(MeterModel value, $Res Function(MeterModel) _then) = _$MeterModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) MeterType? type,@JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? readDate, double? previous, double? current, double? usage,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
+ String id,@JsonKey(fromJson: parseRelationIdNullable) String? type,@JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? readDate, double? previous, double? current, double? usage,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
 });
 
 
@@ -73,7 +73,7 @@ class _$MeterModelCopyWithImpl<$Res>
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as MeterType?,readDate: freezed == readDate ? _self.readDate : readDate // ignore: cast_nullable_to_non_nullable
+as String?,readDate: freezed == readDate ? _self.readDate : readDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,previous: freezed == previous ? _self.previous : previous // ignore: cast_nullable_to_non_nullable
 as double?,current: freezed == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as double?,usage: freezed == usage ? _self.usage : usage // ignore: cast_nullable_to_non_nullable
@@ -166,7 +166,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  MeterType? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(fromJson: parseRelationIdNullable)  String? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MeterModel() when $default != null:
 return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,_that.usage,_that.flat,_that.created,_that.updated,_that.deleted);case _:
@@ -187,7 +187,7 @@ return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  MeterType? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(fromJson: parseRelationIdNullable)  String? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)  $default,) {final _that = this;
 switch (_that) {
 case _MeterModel():
 return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,_that.usage,_that.flat,_that.created,_that.updated,_that.deleted);case _:
@@ -207,7 +207,7 @@ return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  MeterType? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(fromJson: parseRelationIdNullable)  String? type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? readDate,  double? previous,  double? current,  double? usage, @JsonKey(fromJson: parseRelationIdNullable)  String? flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)  DateTime updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)  DateTime? deleted)?  $default,) {final _that = this;
 switch (_that) {
 case _MeterModel() when $default != null:
 return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,_that.usage,_that.flat,_that.created,_that.updated,_that.deleted);case _:
@@ -222,12 +222,12 @@ return $default(_that.id,_that.type,_that.readDate,_that.previous,_that.current,
 @JsonSerializable()
 
 class _MeterModel extends MeterModel {
-  const _MeterModel({required this.id, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.readDate, this.previous, this.current, this.usage, @JsonKey(fromJson: parseRelationIdNullable) this.flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.deleted}): super._();
+  const _MeterModel({required this.id, @JsonKey(fromJson: parseRelationIdNullable) this.type, @JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.readDate, this.previous, this.current, this.usage, @JsonKey(fromJson: parseRelationIdNullable) this.flat, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.created, @JsonKey(fromJson: parsePbDate, toJson: formatPbDate) required this.updated, @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) this.deleted}): super._();
   factory _MeterModel.fromJson(Map<String, dynamic> json) => _$MeterModelFromJson(json);
 
 @override final  String id;
-/// Utility type (water / gas / electric). Empty string treated as [null].
-@override@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) final  MeterType? type;
+/// Utility type relation ID.
+@override@JsonKey(fromJson: parseRelationIdNullable) final  String? type;
 /// Date the meter was read. PocketBase field: `read_date`.
 @override@JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) final  DateTime? readDate;
 @override final  double? previous;
@@ -273,7 +273,7 @@ abstract mixin class _$MeterModelCopyWith<$Res> implements $MeterModelCopyWith<$
   factory _$MeterModelCopyWith(_MeterModel value, $Res Function(_MeterModel) _then) = __$MeterModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) MeterType? type,@JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? readDate, double? previous, double? current, double? usage,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
+ String id,@JsonKey(fromJson: parseRelationIdNullable) String? type,@JsonKey(name: 'read_date', fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? readDate, double? previous, double? current, double? usage,@JsonKey(fromJson: parseRelationIdNullable) String? flat,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime created,@JsonKey(fromJson: parsePbDate, toJson: formatPbDate) DateTime updated,@JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable) DateTime? deleted
 });
 
 
@@ -294,7 +294,7 @@ class __$MeterModelCopyWithImpl<$Res>
   return _then(_MeterModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as MeterType?,readDate: freezed == readDate ? _self.readDate : readDate // ignore: cast_nullable_to_non_nullable
+as String?,readDate: freezed == readDate ? _self.readDate : readDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,previous: freezed == previous ? _self.previous : previous // ignore: cast_nullable_to_non_nullable
 as double?,current: freezed == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as double?,usage: freezed == usage ? _self.usage : usage // ignore: cast_nullable_to_non_nullable

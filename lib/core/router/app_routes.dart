@@ -12,8 +12,11 @@ abstract final class AppRoutes {
   static const String adminDashboard = '/admin/dashboard';
   static const String adminBuildings = '/admin/buildings';
   static const String adminTransactions = '/admin/transactions';
+  static const String adminContracts = '/admin/contracts';
   static const String adminTickets = '/admin/tickets';
   static const String adminAnnouncements = '/admin/announcements';
+  static const String adminResidents = '/admin/residents';
+  static const String adminOwners = '/admin/owners';
   static const String adminProfile = '/admin/profile';
 
   // ── Resident branch ────────────────────────────────────────────────────────

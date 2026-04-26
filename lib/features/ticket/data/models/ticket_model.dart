@@ -26,9 +26,13 @@ abstract class TicketModel with _$TicketModel {
     @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
     RecordStatus? status,
 
-    /// ID of the submitting resident [users] record (optional).
+    /// ID of the related [apartment] record (optional).
     @JsonKey(fromJson: parseRelationIdNullable)
-    String? resident,
+    String? apartment,
+
+    /// ID of the related [site] record (optional).
+    @JsonKey(fromJson: parseRelationIdNullable)
+    String? site,
 
     /// ID of the related [flat] record (optional).
     @JsonKey(fromJson: parseRelationIdNullable)

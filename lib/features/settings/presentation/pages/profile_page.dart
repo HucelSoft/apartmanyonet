@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:apartmanyonet/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -79,19 +80,19 @@ class _ProfileHeader extends StatelessWidget {
             onPressed: () => context.pop(),
           ),
           const SizedBox(width: 8),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Profile',
-                style: TextStyle(
+                AppLocalizations.of(context)!.profile,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF0F172A),
                   letterSpacing: -0.3,
                 ),
               ),
-              Text(
+              const Text(
                 'Account details & preferences',
                 style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
               ),
@@ -356,9 +357,9 @@ class _PreferencesCard extends StatelessWidget {
           const SizedBox(height: 28),
 
           // ── Language ────────────────────────────────────────────────────────
-          const Text(
-            'Language',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.language,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Color(0xFF374151),
@@ -374,7 +375,7 @@ class _PreferencesCard extends StatelessWidget {
           // ── Danger zone ─────────────────────────────────────────────────────
           _SectionTitle(
             icon: Icons.logout_rounded,
-            title: 'Session',
+            title: AppLocalizations.of(context)!.logout,
             iconColor: const Color(0xFFDC2626),
           ),
           const SizedBox(height: 12),
@@ -383,7 +384,7 @@ class _PreferencesCard extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () => _confirmLogout(context),
               icon: const Icon(Icons.logout_rounded, size: 16),
-              label: const Text('Sign Out'),
+              label: Text(AppLocalizations.of(context)!.logout),
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFFDC2626),
                 side: const BorderSide(color: Color(0xFFDC2626)),
@@ -537,15 +538,26 @@ class _LanguageSelector extends StatelessWidget {
   const _LanguageSelector({required this.prefs});
   final PreferenceNotifier prefs;
 
-  static const _options = [
-    (locale: Locale('tr'), flag: '🇹🇷', label: 'Türkçe'),
-    (locale: Locale('en'), flag: '🇬🇧', label: 'English'),
-  ];
+  List<({Locale locale, String flag, String label})> _options(
+          BuildContext context) =>
+      [
+        (
+          locale: const Locale('tr'),
+          flag: '🇹🇷',
+          label: AppLocalizations.of(context)!.turkish
+        ),
+        (
+          locale: const Locale('en'),
+          flag: '🇬🇧',
+          label: AppLocalizations.of(context)!.english
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
+    final opts = _options(context);
     return Column(
-      children: _options
+      children: opts
           .map(
             (opt) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -801,8 +813,6 @@ class _RoleBadgeSmall extends StatelessWidget {
     final (bg, icon) = switch (role) {
       UserRole.superAdmin => (const Color(0xFF6366F1), Icons.shield_rounded),
       UserRole.siteAdmin => (const Color(0xFF0284C7), Icons.manage_accounts),
-      UserRole.resident => (const Color(0xFF16A34A), Icons.home_rounded),
-      UserRole.owner => (const Color(0xFFD97706), Icons.vpn_key_rounded),
     };
 
     return Container(
@@ -835,16 +845,6 @@ class _RolePill extends StatelessWidget {
           'Site Admin',
           const Color(0xFFE0F2FE),
           const Color(0xFF0369A1),
-        ),
-      UserRole.resident => (
-          'Resident',
-          const Color(0xFFDCFCE7),
-          const Color(0xFF15803D),
-        ),
-      UserRole.owner => (
-          'Owner',
-          const Color(0xFFFEF3C7),
-          const Color(0xFFB45309),
         ),
     };
 

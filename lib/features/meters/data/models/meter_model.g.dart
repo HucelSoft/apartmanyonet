@@ -8,11 +8,7 @@ part of 'meter_model.dart';
 
 _MeterModel _$MeterModelFromJson(Map<String, dynamic> json) => _MeterModel(
   id: json['id'] as String,
-  type: $enumDecodeNullable(
-    _$MeterTypeEnumMap,
-    json['type'],
-    unknownValue: JsonKey.nullForUndefinedEnumValue,
-  ),
+  type: parseRelationIdNullable(json['type']),
   readDate: parsePbDateNullable(json['read_date']),
   previous: (json['previous'] as num?)?.toDouble(),
   current: (json['current'] as num?)?.toDouble(),
@@ -26,7 +22,7 @@ _MeterModel _$MeterModelFromJson(Map<String, dynamic> json) => _MeterModel(
 Map<String, dynamic> _$MeterModelToJson(_MeterModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'type': _$MeterTypeEnumMap[instance.type],
+      'type': instance.type,
       'read_date': formatPbDateNullable(instance.readDate),
       'previous': instance.previous,
       'current': instance.current,
@@ -36,9 +32,3 @@ Map<String, dynamic> _$MeterModelToJson(_MeterModel instance) =>
       'updated': formatPbDate(instance.updated),
       'deleted': formatPbDateNullable(instance.deleted),
     };
-
-const _$MeterTypeEnumMap = {
-  MeterType.water: 'water',
-  MeterType.gas: 'gas',
-  MeterType.electric: 'electric',
-};

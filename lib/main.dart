@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:apartmanyonet/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -76,8 +77,9 @@ class _RouterScopeState extends State<_RouterScope> {
       darkTheme: AppTheme.dark,
       themeMode: prefs.themeMode,
       locale: prefs.locale,
-      supportedLocales: const [Locale('tr'), Locale('en')],
+      supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

@@ -19,9 +19,25 @@ abstract class ContractModel with _$ContractModel {
     @JsonKey(fromJson: parseRelationId)
     required String flat,
 
+    /// ID of the related [apartment] record.
+    @JsonKey(fromJson: parseRelationId)
+    required String apartment,
+
+    /// ID of the related [site] record.
+    @JsonKey(fromJson: parseRelationId)
+    required String site,
+
+    /// ID of the related [organization] record.
+    @JsonKey(fromJson: parseRelationId)
+    required String organization,
+
     /// ID of the resident [users] record.
     @JsonKey(fromJson: parseRelationId)
     required String resident,
+
+    /// ID of the related [owner] record.
+    @JsonKey(fromJson: parseRelationId)
+    required String owner,
 
     /// Lease start date.
     @JsonKey(fromJson: parsePbDate, toJson: formatPbDate)
@@ -49,6 +65,8 @@ abstract class ContractModel with _$ContractModel {
 
     @JsonKey(fromJson: parsePbDateNullable, toJson: formatPbDateNullable)
     DateTime? deleted,
+
+    @Default({}) Map<String, dynamic> expand,
   }) = _ContractModel;
 
   factory ContractModel.fromJson(Map<String, dynamic> json) =>

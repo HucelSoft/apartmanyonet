@@ -1,43 +1,43 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_model.dart';
+part of 'owner_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
+_OwnerModel _$OwnerModelFromJson(Map<String, dynamic> json) => _OwnerModel(
   id: json['id'] as String,
-  email: json['email'] as String,
-  emailVisibility: json['emailVisibility'] as bool? ?? false,
-  verified: json['verified'] as bool? ?? false,
   name: json['name'] as String?,
+  surname: json['surname'] as String?,
+  type: $enumDecodeNullable(
+    _$PersonTypeEnumMap,
+    json['type'],
+    unknownValue: JsonKey.nullForUndefinedEnumValue,
+  ),
+  email: json['email'] as String?,
   phone: json['phone'] as String?,
-  avatar: json['avatar'] as String?,
-  organization: parseRelationId(json['organization']),
-  role: $enumDecode(_$UserRoleEnumMap, json['role']),
+  organization: parseRelationIdNullable(json['organization']),
   created: parsePbDate(json['created']),
   updated: parsePbDate(json['updated']),
   deleted: parsePbDateNullable(json['deleted']),
 );
 
-Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
+Map<String, dynamic> _$OwnerModelToJson(_OwnerModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'email': instance.email,
-      'emailVisibility': instance.emailVisibility,
-      'verified': instance.verified,
       'name': instance.name,
+      'surname': instance.surname,
+      'type': _$PersonTypeEnumMap[instance.type],
+      'email': instance.email,
       'phone': instance.phone,
-      'avatar': instance.avatar,
       'organization': instance.organization,
-      'role': _$UserRoleEnumMap[instance.role]!,
       'created': formatPbDate(instance.created),
       'updated': formatPbDate(instance.updated),
       'deleted': formatPbDateNullable(instance.deleted),
     };
 
-const _$UserRoleEnumMap = {
-  UserRole.superAdmin: 'super_admin',
-  UserRole.siteAdmin: 'site_admin',
+const _$PersonTypeEnumMap = {
+  PersonType.individual: 'individual',
+  PersonType.corporate: 'corporate',
 };

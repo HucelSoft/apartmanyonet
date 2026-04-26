@@ -8,10 +8,6 @@ enum UserRole {
   superAdmin,
   @JsonValue('site_admin')
   siteAdmin,
-  @JsonValue('resident')
-  resident,
-  @JsonValue('owner')
-  owner,
 }
 
 /// Occupancy status of a flat unit.
@@ -19,9 +15,7 @@ enum FlatStatus {
   @JsonValue('occupied')
   occupied,
   @JsonValue('vacant')
-  empty,
-  @JsonValue('maintenance')
-  maintenance,
+  vacant,
 }
 
 /// Lifecycle state of a lease contract.
@@ -58,14 +52,12 @@ enum TicketPriority {
   urgent,
 }
 
-/// Utility meter type.
-enum MeterType {
-  @JsonValue('water')
-  water,
-  @JsonValue('gas')
-  gas,
-  @JsonValue('electric')
-  electric,
+/// Type of person for residents and owners.
+enum PersonType {
+  @JsonValue('individual')
+  individual,
+  @JsonValue('corporate')
+  corporate,
 }
 
 /// Whether a transaction type represents money coming in or going out.
